@@ -1,16 +1,33 @@
+const { boolean } = require("joi");
 const Joi = require("joi");
 
 const validationSchema = Joi.object({
   name: Joi.string().alphanum().max(30).required(),
   email: Joi.string().email().required(),
   phone: Joi.string().required(),
+  favorite: Joi.boolean().optional(),
 });
 
 const updateSchema = Joi.object({
   name: Joi.string().alphanum().max(30).optional(),
   email: Joi.string().email().optional(),
   phone: Joi.string().optional(),
-}).or("name", "email", "phone");
+  favorite: Joi.boolean().optional(),
+}).or("name", "email", "phone", "favorite");
+
+const favoriteSchema = Joi.object({
+  favorite: Joi.boolean().required(),
+});
+
+const favoriteValidation = async (req, res, next) => {
+  try {
+    const value = await favoriteSchema.validateAsync(req.body);
+  } catch (err) {
+    res.status(400).json({ message: err.message.replace(/"/g, "") });
+    return;
+  }
+  next();
+};
 
 const addAndReplacementValidate = async (req, res, next) => {
   try {
@@ -38,4 +55,5 @@ const updateValidate = async (req, res, next) => {
 module.exports = {
   addAndReplacementValidate,
   updateValidate,
+  favoriteValidation,
 };

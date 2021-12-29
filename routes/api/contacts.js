@@ -3,82 +3,34 @@ const router = express.Router();
 const {
   listContacts,
   getContactById,
+  addContacts,
   removeContact,
-  addContact,
   replacementContact,
   updateContact,
-} = require("../../model");
-const validation = require("./validation");
+  changeFavoriteStatus,
+} = require("../../controllers");
+const { contactValidation } = require("../../midllewares");
 
-router.get("/", async (req, res, next) => {
-  const contacts = await listContacts();
-  res.status(200).json(contacts);
-});
+router.get("/", listContacts);
 
-router.get("/:contactId", async (req, res, next) => {
-  const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+router.get("/:contactId", getContactById);
 
-  if (!contact) {
-    res.status(404).json({ message: "Contact not found!" });
-    return;
-  }
-  res.status(200).json(contact);
-});
+router.post("/", contactValidation.addAndReplacementValidate, addContacts);
 
-router.post(
-  "/",
-  validation.addAndReplacementValidate,
-  async (req, res, next) => {
-    const newContact = await addContact(req.body);
-    res.status(201).json(newContact);
-  }
-);
-
-router.delete("/:contactId", async (req, res, next) => {
-  const { contactId } = req.params;
-  const contacts = await removeContact(contactId);
-
-  if (!contacts) {
-    res.status(404).json({ message: "Contact does not exist!" });
-    return;
-  }
-
-  res.status(200).json({ message: "Contact deleted!" });
-});
+router.delete("/:contactId", removeContact);
 
 router.put(
   "/:contactId",
-  validation.addAndReplacementValidate,
-  async (req, res, next) => {
-    const { contactId } = req.params;
-
-    const contactReplaced = await replacementContact(contactId, req.body);
-
-    if (!contactReplaced) {
-      res.status(404).json({ message: "Contact not found!" });
-      return;
-    }
-
-    res.status(200).json({ message: "Contact replacement!" });
-  }
+  contactValidation.addAndReplacementValidate,
+  replacementContact
 );
 
+router.patch("/:contactId", contactValidation.updateValidate, updateContact);
+
 router.patch(
-  "/:contactId",
-  validation.updateValidate,
-  async (req, res, next) => {
-    const { contactId } = req.params;
-
-    const contactUpdated = await updateContact(contactId, req.body);
-
-    if (!contactUpdated) {
-      res.status(404).json({ message: "Contact not found!" });
-      return;
-    }
-
-    res.status(200).json({ message: "Contact updated!" });
-  }
+  "/:contactId/favorite",
+  contactValidation.favoriteValidation,
+  changeFavoriteStatus
 );
 
 module.exports = router;
