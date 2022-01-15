@@ -1,8 +1,12 @@
 const Contact = require("../../schemas/contactSchema");
 
 const removeContact = async (req, res, next) => {
+  const { id: userId } = req.user;
   const { contactId } = req.params;
-  const contactIsRemoved = await Contact.findByIdAndRemove({ _id: contactId });
+  const contactIsRemoved = await Contact.findOneAndRemove({
+    _id: contactId,
+    owner: userId,
+  });
 
   if (!contactIsRemoved) {
     res.status(404).json({ message: "Contact does not exist!" });

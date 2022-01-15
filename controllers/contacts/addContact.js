@@ -1,7 +1,8 @@
 const Contact = require("../../schemas/contactSchema");
 
 const addContact = async (req, res, next) => {
-  const newContact = await Contact.create({ ...req.body });
+  const { id: userId } = req.user;
+  const newContact = await Contact.create({ ...req.body, owner: userId });
   res.status(201).json(newContact);
 };
 
