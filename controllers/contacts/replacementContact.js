@@ -1,10 +1,12 @@
 const Contact = require("../../schemas/contactSchema");
 
 const replacementContact = async (req, res, next) => {
+  const { id: userId } = req.user;
+
   const { contactId } = req.params;
 
   const contactIsReplaced = await Contact.findOneAndReplace(
-    { _id: contactId },
+    { _id: contactId, owner: userId },
     req.body,
     { new: true }
   );

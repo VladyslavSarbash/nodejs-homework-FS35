@@ -1,36 +1,45 @@
 const express = require("express");
 const router = express.Router();
-const {
-  listContacts,
-  getContactById,
-  addContacts,
-  removeContact,
-  replacementContact,
-  updateContact,
-  changeFavoriteStatus,
-} = require("../../controllers");
+const { contacts } = require("../../controllers");
 const { contactValidation } = require("../../midllewares");
+const guard = require("../../midllewares/guard");
 
-router.get("/", listContacts);
+router.get(
+  "/",
+  [guard, contactValidation.queryValidate],
+  contacts.listContacts
+);
 
-router.get("/:contactId", getContactById);
+router.get(
+  "/:contactId",
+  [guard, contactValidation.queryValidate],
+  contacts.getContactById
+);
 
-router.post("/", contactValidation.addAndReplacementValidate, addContacts);
+router.post(
+  "/",
+  [guard, contactValidation.addAndReplacementValidate],
+  contacts.addContacts
+);
 
-router.delete("/:contactId", removeContact);
+router.delete("/:contactId", guard, contacts.removeContact);
 
 router.put(
   "/:contactId",
-  contactValidation.addAndReplacementValidate,
-  replacementContact
+  [guard, contactValidation.addAndReplacementValidate],
+  contacts.replacementContact
 );
 
-router.patch("/:contactId", contactValidation.updateValidate, updateContact);
+router.patch(
+  "/:contactId",
+  [guard, contactValidation.updateValidate],
+  contacts.updateContact
+);
 
 router.patch(
   "/:contactId/favorite",
-  contactValidation.favoriteValidation,
-  changeFavoriteStatus
+  [guard, contactValidation.favoriteValidation],
+  contacts.changeFavoriteStatus
 );
 
 module.exports = router;

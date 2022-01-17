@@ -1,9 +1,10 @@
 const Contact = require("../../schemas/contactSchema");
 
 const changeFavoriteStatus = async (req, res, next) => {
+  const { id: userId } = req.user;
   const { contactId } = req.params;
   const statusIsChange = await Contact.findByIdAndUpdate(
-    { _id: contactId },
+    { _id: contactId, owner: userId },
     req.body,
     { new: true }
   );

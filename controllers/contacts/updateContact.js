@@ -1,10 +1,11 @@
 const Contact = require("../../schemas/contactSchema");
 
 const updateContact = async (req, res, next) => {
+  const { id: userId } = req.user;
   const { contactId } = req.params;
 
-  const contactIsUpdated = await Contact.findByIdAndUpdate(
-    { _id: contactId },
+  const contactIsUpdated = await Contact.findOneAndUpdate(
+    { _id: contactId, owner: userId },
     req.body,
     { new: true }
   );
