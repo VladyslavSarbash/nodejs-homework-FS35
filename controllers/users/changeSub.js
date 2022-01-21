@@ -11,7 +11,7 @@ const changeSubscription = async (req, res, next) => {
     return;
   }
 
-  const newUser = await User.findOneAndUpdate({ _id }, req.body, {
+  await User.findOneAndUpdate({ _id }, req.body, {
     new: true,
   });
 
