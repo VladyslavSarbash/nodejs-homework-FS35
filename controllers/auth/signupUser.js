@@ -15,6 +15,7 @@ const signupUser = async (req, res, next) => {
     user: {
       email: data.email,
       subscription: data.subscription,
+      avatar: data.avatarURL,
     },
   });
 };

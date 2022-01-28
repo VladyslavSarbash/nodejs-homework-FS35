@@ -1,6 +1,8 @@
+var gravatar = require("gravatar");
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 const bcrypt = require("bcryptjs");
+const { string } = require("joi");
 
 const users = new Schema(
   {
@@ -21,6 +23,18 @@ const users = new Schema(
     token: {
       type: String,
       default: null,
+    },
+    avatarURL: {
+      type: String,
+      default: function () {
+        return gravatar.url(
+          this.email,
+          {
+            s: "200",
+          },
+          true
+        );
+      },
     },
   },
   { versionKey: false, timestamps: true }
