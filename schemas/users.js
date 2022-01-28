@@ -1,4 +1,5 @@
-var gravatar = require("gravatar");
+const gravatar = require("gravatar");
+const { randomUUID } = require("crypto");
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 const bcrypt = require("bcryptjs");
@@ -35,6 +36,15 @@ const users = new Schema(
           true
         );
       },
+    },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      required: [true, "Verify token is required"],
+      default: randomUUID(),
     },
   },
   { versionKey: false, timestamps: true }
